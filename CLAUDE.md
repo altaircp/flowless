@@ -4,20 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This App Does
 
-Flowless is a queue management SaaS — customers join queues (walk-in, kiosk, or online booking), staff call and serve them from counters, and managers monitor analytics. Astro 6 + Preact, deployed to Cloudflare Pages.
+Flowless is a queue management SaaS — customers join queues (walk-in, kiosk, or online booking), staff call and serve them from counters, and managers monitor analytics. Astro 6 + Preact, deployed to Cloudflare Workers.
 
 ## Commands
 
 - `npm run dev` — Start dev server (localhost:4321)
 - `npm run build` — Production build to `./dist/`
 - `npm run preview` — Build and preview locally via Wrangler
-- `npm run deploy` — Build and deploy to Cloudflare Pages
+- `npm run deploy` — Build and deploy to Cloudflare Workers
 - `npx astro check` — TypeScript + Astro type checking (runs in pre-commit hook)
 
 ## Architecture
 
 - **Framework:** Astro 6 with strict TypeScript, Preact islands, Tailwind CSS v4
-- **Runtime:** Cloudflare Pages with `nodejs_compat` flag
+- **Runtime:** Cloudflare Workers with `nodejs_compat` flag
 - **Build tool:** Vite 7 (pinned override), Node >=22.12.0
 - **State:** Nanostores for client-side state, MockDataStore for server-side data
 
@@ -43,7 +43,7 @@ Flowless is a queue management SaaS — customers join queues (walk-in, kiosk, o
 7. `src/components/dashboard/KPICards.tsx` — Manager dashboard reads aggregated stats from dataStore
 8. `src/layouts/AppLayout.astro` — Wraps all authenticated views (sidebar + navbar)
 9. `astro.config.mjs` — Astro + Cloudflare adapter + Preact + Tailwind config
-10. `wrangler.jsonc` — Cloudflare Pages deployment config
+10. `wrangler.jsonc` — Cloudflare Workers deployment config
 
 ## Known Risks
 
