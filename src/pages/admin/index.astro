@@ -1,0 +1,29 @@
+---
+import AppLayout from '../../layouts/AppLayout.astro';
+import { dataStore } from '../../data/store';
+import SettingsTabs from '../../components/admin/SettingsTabs';
+
+const branchesJson = JSON.stringify(dataStore.branches);
+const servicesJson = JSON.stringify(dataStore.services);
+const staffJson = JSON.stringify(dataStore.staff);
+const queuesJson = JSON.stringify(dataStore.queues);
+const countersJson = JSON.stringify(dataStore.counters);
+---
+
+<AppLayout title="Settings" activeNav="settings">
+  <!-- Page Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Administration</h1>
+    <p class="text-sm text-slate-500 mt-1">Manage branches, services, staff, and queue rules</p>
+  </div>
+
+  <!-- Settings Tabs -->
+  <SettingsTabs
+    client:load
+    branches={branchesJson}
+    services={servicesJson}
+    staff={staffJson}
+    queues={queuesJson}
+    counters={countersJson}
+  />
+</AppLayout>

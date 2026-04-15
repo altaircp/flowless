@@ -1,0 +1,125 @@
+---
+import Button from '../ui/Button.astro';
+
+const tiers = [
+  {
+    name: 'Starter',
+    price: '$49',
+    period: '/mo',
+    description: 'Perfect for single-location businesses getting started with queue management.',
+    features: [
+      '1 branch location',
+      'Up to 3 service counters',
+      'Basic virtual queueing',
+      'Email support',
+      'Standard analytics',
+    ],
+    cta: 'Start Free Trial',
+    highlighted: false,
+  },
+  {
+    name: 'Professional',
+    price: '$149',
+    period: '/mo',
+    description: 'For growing organizations that need smart routing and deeper insights.',
+    features: [
+      'Up to 5 branch locations',
+      'Unlimited counters',
+      'Smart routing & prioritization',
+      'Advanced analytics & reports',
+      'Appointment booking',
+      'Digital signage',
+      'Priority support',
+    ],
+    cta: 'Start Free Trial',
+    highlighted: true,
+    badge: 'Most Popular',
+  },
+  {
+    name: 'Enterprise',
+    price: 'Custom',
+    period: '',
+    description: 'For large organizations needing full control, integrations, and compliance.',
+    features: [
+      'Unlimited branches & counters',
+      'Full API access',
+      'Custom integrations',
+      'Dedicated account manager',
+      'SLA guarantee',
+      'SSO & advanced security',
+      'On-premise option',
+    ],
+    cta: 'Contact Sales',
+    highlighted: false,
+  },
+];
+---
+
+<section id="pricing" class="py-20 sm:py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section header -->
+    <div class="max-w-2xl mx-auto text-center mb-16">
+      <span class="text-sm font-semibold text-brand-600 tracking-wide uppercase">Pricing</span>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+        Simple, transparent pricing
+      </h2>
+      <p class="mt-4 text-lg text-slate-600">
+        Start free for 14 days. No credit card required. Scale as you grow.
+      </p>
+    </div>
+
+    <!-- Pricing cards -->
+    <div class="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto items-start">
+      {tiers.map((tier) => (
+        <div class:list={[
+          'relative rounded-2xl border p-8 flex flex-col',
+          tier.highlighted
+            ? 'border-brand-600 shadow-xl shadow-brand-100/50 ring-1 ring-brand-600 scale-[1.02]'
+            : 'border-slate-200 shadow-sm',
+        ]}>
+          {tier.badge && (
+            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-600 text-white shadow-sm">
+                {tier.badge}
+              </span>
+            </div>
+          )}
+
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-slate-900">{tier.name}</h3>
+            <div class="mt-3 flex items-baseline gap-1">
+              <span class:list={[
+                'text-4xl font-bold tracking-tight',
+                tier.highlighted ? 'text-brand-600' : 'text-slate-900',
+              ]}>{tier.price}</span>
+              {tier.period && (
+                <span class="text-slate-500 text-base">{tier.period}</span>
+              )}
+            </div>
+            <p class="mt-3 text-sm text-slate-600 leading-relaxed">{tier.description}</p>
+          </div>
+
+          <ul class="space-y-3 mb-8 flex-1">
+            {tier.features.map((feature) => (
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <svg class="w-5 h-5 text-brand-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                {feature}
+              </li>
+            ))}
+          </ul>
+
+          <Button
+            variant={tier.highlighted ? 'primary' : 'secondary'}
+            size="lg"
+            href={tier.name === 'Enterprise' ? '#contact' : '/register'}
+            fullWidth
+          >
+            {tier.cta}
+          </Button>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

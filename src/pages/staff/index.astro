@@ -1,0 +1,175 @@
+---
+import AppLayout from '../../layouts/AppLayout.astro';
+import CounterPanel from '../../components/staff/CounterPanel.tsx';
+import QueueSidebar from '../../components/staff/QueueSidebar.tsx';
+import { dataStore } from '../../data/store';
+import { TicketStatus } from '../../data/enums';
+
+// Pick the first "serving" counter at branch-01 as the default workspace
+const branchId = 'branch-01';
+const branchCounters = dataStore.getCountersByBranch(branchId);
+const activeCounter = branchCounters.find((c) => c.status === 'serving') ?? branchCounters[0];
+const staffMember = activeCounter.staffId ? dataStore.getStaffMember(activeCounter.staffId) : undefined;
+
+if (!activeCounter || !staffMember) {
+  return Astro.redirect('/');
+}
+
+// Current ticket being served at this counter
+const currentTicket = activeCounter.currentTicketId
+  ? dataStore.getTicket(activeCounter.currentTicketId) ?? null
+  : null;
+
+// All waiting tickets for branch-01 that match the counter's service IDs
+const allBranchTickets = dataStore.getTicketsByBranch(branchId);
+const waitingTickets = allBranchTickets
+  .filter(
+    (t) =>
+      t.status === TicketStatus.Waiting &&
+      activeCounter.serviceIds.includes(t.serviceId),
+  )
+  .sort((a, b) => a.position - b.position);
+
+// All waiting tickets across the branch (for the sidebar)
+const allWaitingTickets = allBranchTickets.filter((t) => t.status === TicketStatus.Waiting);
+
+// Services, customers, counters, staff for props
+const services = dataStore.services.filter((s) => s.branchIds.includes(branchId));
+const customerIds = new Set([
+  ...waitingTickets.map((t) => t.customerId),
+  ...allWaitingTickets.map((t) => t.customerId),
+  ...(currentTicket ? [currentTicket.customerId] : []),
+]);
+const customers = dataStore.customers.filter((c) => customerIds.has(c.id));
+
+const allCounters = branchCounters;
+const allStaff = dataStore.getStaffByBranch(branchId);
+
+// Serialize for Preact islands
+const counterJson = JSON.stringify({
+  id: activeCounter.id,
+  number: activeCounter.number,
+  displayName: activeCounter.displayName,
+  status: activeCounter.status,
+  currentTicketId: activeCounter.currentTicketId,
+  staffId: activeCounter.staffId,
+  serviceIds: activeCounter.serviceIds,
+});
+
+const staffJson = JSON.stringify({
+  id: staffMember.id,
+  name: staffMember.name,
+  avatarInitials: staffMember.avatarInitials,
+  role: staffMember.role,
+});
+
+const currentTicketJson = currentTicket
+  ? JSON.stringify({
+      id: currentTicket.id,
+      ticketNumber: currentTicket.ticketNumber,
+      customerId: currentTicket.customerId,
+      serviceId: currentTicket.serviceId,
+      priority: currentTicket.priority,
+      source: currentTicket.source,
+      position: currentTicket.position,
+      createdAt: currentTicket.createdAt,
+      servingStartedAt: currentTicket.servingStartedAt,
+      notes: currentTicket.notes,
+    })
+  : 'null';
+
+const waitingTicketsJson = JSON.stringify(
+  waitingTickets.map((t) => ({
+    id: t.id,
+    ticketNumber: t.ticketNumber,
+    customerId: t.customerId,
+    serviceId: t.serviceId,
+    priority: t.priority,
+    source: t.source,
+    position: t.position,
+    createdAt: t.createdAt,
+    servingStartedAt: t.servingStartedAt,
+    notes: t.notes,
+  })),
+);
+
+const allWaitingJson = JSON.stringify(
+  allWaitingTickets.map((t) => ({
+    id: t.id,
+    ticketNumber: t.ticketNumber,
+    customerId: t.customerId,
+    serviceId: t.serviceId,
+    priority: t.priority,
+    position: t.position,
+    createdAt: t.createdAt,
+  })),
+);
+
+const servicesJson = JSON.stringify(
+  services.map((s) => ({
+    id: s.id,
+    name: s.name,
+    icon: s.icon,
+    estimatedDurationMinutes: s.estimatedDurationMinutes,
+  })),
+);
+
+const customersJson = JSON.stringify(
+  customers.map((c) => ({
+    id: c.id,
+    name: c.name,
+    priority: c.priority,
+    visitCount: c.visitCount,
+  })),
+);
+
+const allCountersJson = JSON.stringify(
+  allCounters.map((c) => ({
+    id: c.id,
+    number: c.number,
+    displayName: c.displayName,
+    status: c.status,
+    currentTicketId: c.currentTicketId,
+    staffId: c.staffId,
+    serviceIds: c.serviceIds,
+  })),
+);
+
+const allStaffJson = JSON.stringify(
+  allStaff.map((s) => ({
+    id: s.id,
+    name: s.name,
+    avatarInitials: s.avatarInitials,
+    role: s.role,
+  })),
+);
+---
+
+<AppLayout title="Counter Workspace" activeNav="counter">
+  <div class="flex gap-6 h-[calc(100vh-7rem)]">
+    <!-- Main panel -->
+    <div class="flex-1 min-w-0 overflow-y-auto">
+      <CounterPanel
+        client:load
+        counter={counterJson}
+        staff={staffJson}
+        currentTicket={currentTicketJson}
+        waitingTickets={waitingTicketsJson}
+        services={servicesJson}
+        customers={customersJson}
+        allCounters={allCountersJson}
+        allStaff={allStaffJson}
+      />
+    </div>
+
+    <!-- Sidebar -->
+    <div class="hidden lg:block w-80 flex-shrink-0">
+      <QueueSidebar
+        client:load
+        tickets={allWaitingJson}
+        services={servicesJson}
+        customers={customersJson}
+      />
+    </div>
+  </div>
+</AppLayout>

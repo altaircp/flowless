@@ -1,0 +1,61 @@
+import type { Branch } from '../types';
+
+export const branches: Branch[] = [
+  {
+    id: 'branch-01',
+    name: 'Downtown Financial Center',
+    address: '123 Main Street',
+    city: 'Metropolis',
+    phone: '+1-555-100-0001',
+    timezone: 'America/New_York',
+    operatingHours: [
+      { day: 0, open: '', close: '' }, // Sunday closed
+      { day: 1, open: '08:00', close: '18:00' },
+      { day: 2, open: '08:00', close: '18:00' },
+      { day: 3, open: '08:00', close: '18:00' },
+      { day: 4, open: '08:00', close: '18:00' },
+      { day: 5, open: '08:00', close: '18:00' },
+      { day: 6, open: '09:00', close: '14:00' },
+    ],
+    isActive: true,
+    coordinates: { lat: 40.7128, lng: -74.006 },
+  },
+  {
+    id: 'branch-02',
+    name: 'Northside Mall',
+    address: '456 Commerce Blvd, Suite 200',
+    city: 'Metropolis',
+    phone: '+1-555-100-0002',
+    timezone: 'America/New_York',
+    operatingHours: [
+      { day: 0, open: '11:00', close: '17:00' },
+      { day: 1, open: '09:00', close: '19:00' },
+      { day: 2, open: '09:00', close: '19:00' },
+      { day: 3, open: '09:00', close: '19:00' },
+      { day: 4, open: '09:00', close: '19:00' },
+      { day: 5, open: '09:00', close: '19:00' },
+      { day: 6, open: '09:00', close: '19:00' },
+    ],
+    isActive: true,
+    coordinates: { lat: 40.7489, lng: -73.9857 },
+  },
+  {
+    id: 'branch-03',
+    name: 'Airport Terminal',
+    address: '789 Sky Harbor Way, Terminal B',
+    city: 'Metropolis',
+    phone: '+1-555-100-0003',
+    timezone: 'America/New_York',
+    operatingHours: [
+      { day: 0, open: '06:00', close: '22:00' },
+      { day: 1, open: '06:00', close: '22:00' },
+      { day: 2, open: '06:00', close: '22:00' },
+      { day: 3, open: '06:00', close: '22:00' },
+      { day: 4, open: '06:00', close: '22:00' },
+      { day: 5, open: '06:00', close: '22:00' },
+      { day: 6, open: '06:00', close: '22:00' },
+    ],
+    isActive: true,
+    coordinates: { lat: 40.6413, lng: -73.7781 },
+  },
+];

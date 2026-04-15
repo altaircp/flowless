@@ -1,0 +1,43 @@
+---
+interface Props {
+  initials: string;
+  size?: 'sm' | 'md' | 'lg';
+  color?: string;
+  class?: string;
+}
+
+const {
+  initials,
+  size = 'md',
+  color,
+  class: className = '',
+} = Astro.props;
+
+const sizeClasses: Record<string, string> = {
+  sm: 'w-8 h-8 text-xs',
+  md: 'w-10 h-10 text-sm',
+  lg: 'w-14 h-14 text-lg',
+};
+
+const defaultColors = [
+  'bg-brand-600',
+  'bg-emerald-600',
+  'bg-amber-600',
+  'bg-rose-600',
+  'bg-violet-600',
+  'bg-cyan-600',
+];
+
+// Deterministic color based on initials
+const colorIndex = initials.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaultColors.length;
+const bgColor = color || defaultColors[colorIndex];
+---
+
+<div class:list={[
+  'inline-flex items-center justify-center rounded-full font-semibold text-white shrink-0',
+  sizeClasses[size],
+  bgColor,
+  className,
+]}>
+  {initials.slice(0, 2).toUpperCase()}
+</div>

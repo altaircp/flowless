@@ -1,0 +1,25 @@
+---
+import KioskLayout from '../../layouts/KioskLayout.astro';
+import KioskApp from '../../components/kiosk/KioskApp';
+import { dataStore } from '../../data/store';
+
+const { branchId } = Astro.params;
+
+const branch = dataStore.getBranch(branchId!);
+if (!branch) {
+  return Astro.redirect('/');
+}
+
+const services = dataStore.getServicesByBranch(branchId!).filter((s) => s.isActive);
+const queues = dataStore.getActiveQueues(branchId!);
+---
+
+<KioskLayout title={`${branch.name} - Kiosk`} branchName={branch.name}>
+  <KioskApp
+    client:load
+    branchId={branchId!}
+    branchName={branch.name}
+    services={JSON.stringify(services)}
+    queues={JSON.stringify(queues)}
+  />
+</KioskLayout>

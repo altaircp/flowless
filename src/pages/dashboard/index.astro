@@ -1,0 +1,113 @@
+---
+import AppLayout from '../../layouts/AppLayout.astro';
+import { dataStore } from '../../data/store';
+import KPICards from '../../components/dashboard/KPICards';
+import WaitTimeChart from '../../components/dashboard/WaitTimeChart';
+import ServiceDistChart from '../../components/dashboard/ServiceDistChart';
+import HourlyHeatmap from '../../components/dashboard/HourlyHeatmap';
+import StaffUtilTable from '../../components/dashboard/StaffUtilTable';
+import AlertPanel from '../../components/dashboard/AlertPanel';
+import StaffingRecommend from '../../components/dashboard/StaffingRecommend';
+
+const branches = dataStore.branches;
+const defaultBranchId = branches[0]?.id ?? '';
+
+// Get data for default branch (client can filter later)
+const snapshots = dataStore.analyticsSnapshots.filter(
+  (s) => s.branchId === defaultBranchId,
+);
+const waitTimeEvents = dataStore.waitTimeEvents.filter(
+  (e) => e.branchId === defaultBranchId,
+);
+const sessions = dataStore.serviceSessions.filter(
+  (s) => s.branchId === defaultBranchId,
+);
+const services = dataStore.services.filter((s) =>
+  s.branchIds.includes(defaultBranchId),
+);
+const staff = dataStore.staff.filter((s) => s.branchId === defaultBranchId);
+const queues = dataStore.queues.filter((q) => q.branchId === defaultBranchId);
+const counters = dataStore.counters.filter(
+  (c) => c.branchId === defaultBranchId,
+);
+const tickets = dataStore.tickets.filter(
+  (t) => t.branchId === defaultBranchId,
+);
+
+// Serialize data for Preact islands
+const snapshotsJson = JSON.stringify(snapshots);
+const waitTimeEventsJson = JSON.stringify(waitTimeEvents);
+const sessionsJson = JSON.stringify(sessions);
+const servicesJson = JSON.stringify(services);
+const staffJson = JSON.stringify(staff);
+const queuesJson = JSON.stringify(queues);
+const countersJson = JSON.stringify(counters);
+const ticketsJson = JSON.stringify(tickets);
+---
+
+<AppLayout title="Dashboard" activeNav="dashboard">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Analytics Dashboard</h1>
+      <p class="text-sm text-slate-500 mt-1">Real-time overview of branch operations</p>
+    </div>
+
+    <!-- Branch Selector -->
+    <div class="flex items-center gap-3">
+      <label for="branch-filter" class="text-sm font-medium text-slate-600">Branch:</label>
+      <select
+        id="branch-filter"
+        class="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+      >
+        {branches.map((branch) => (
+          <option value={branch.id} selected={branch.id === defaultBranchId}>
+            {branch.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
+
+  <!-- Row 1: KPI Cards -->
+  <div class="mb-6">
+    <KPICards client:visible snapshots={snapshotsJson} />
+  </div>
+
+  <!-- Row 2: Wait Time Chart + Service Distribution -->
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+    <div class="lg:col-span-3">
+      <WaitTimeChart client:visible waitTimeEvents={waitTimeEventsJson} />
+    </div>
+    <div class="lg:col-span-2">
+      <ServiceDistChart client:visible sessions={sessionsJson} services={servicesJson} />
+    </div>
+  </div>
+
+  <!-- Row 3: Alert Panel + Hourly Heatmap -->
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+    <div class="lg:col-span-2">
+      <AlertPanel client:load queues={queuesJson} counters={countersJson} tickets={ticketsJson} />
+    </div>
+    <div class="lg:col-span-3">
+      <HourlyHeatmap client:visible snapshots={snapshotsJson} />
+    </div>
+  </div>
+
+  <!-- Row 4: Staff Utilization + Staffing Recommendations -->
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+    <div class="lg:col-span-3">
+      <StaffUtilTable client:visible sessions={sessionsJson} staff={staffJson} />
+    </div>
+    <div class="lg:col-span-2">
+      <StaffingRecommend
+        client:visible
+        queues={queuesJson}
+        counters={countersJson}
+        tickets={ticketsJson}
+        staff={staffJson}
+        services={servicesJson}
+      />
+    </div>
+  </div>
+</AppLayout>

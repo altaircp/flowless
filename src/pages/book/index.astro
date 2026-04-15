@@ -1,0 +1,33 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import BookingWizard from '../../components/appointment/BookingWizard';
+import { dataStore } from '../../data/store';
+
+const branches = dataStore.branches;
+const services = dataStore.services;
+const staffMembers = dataStore.staff;
+const appointments = dataStore.appointments;
+---
+
+<PublicLayout title="Book Appointment">
+  <section class="py-10 px-4 sm:px-6">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-slate-800">Book an Appointment</h1>
+        <p class="text-slate-500 mt-2">
+          Schedule your visit ahead of time and skip the wait.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <BookingWizard
+          client:load
+          branches={branches}
+          services={services}
+          staff={staffMembers}
+          appointments={appointments}
+        />
+      </div>
+    </div>
+  </section>
+</PublicLayout>

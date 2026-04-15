@@ -1,0 +1,39 @@
+---
+import Layout from './Layout.astro';
+
+interface Props {
+  title?: string;
+  branchName?: string;
+}
+
+const { title = 'FlowLess Kiosk', branchName = '' } = Astro.props;
+---
+
+<Layout title={title}>
+  <div class="fixed inset-0 flex flex-col items-center justify-center bg-surface overflow-hidden text-lg">
+    {branchName && (
+      <div class="absolute top-0 inset-x-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <svg class="w-8 h-8 text-brand-600" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill="currentColor" />
+            <path d="M8 12h16M8 16h12M8 20h8" stroke="white" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <span class="text-lg font-semibold text-slate-900">{branchName}</span>
+        </div>
+      </div>
+    )}
+    <div class:list={['w-full h-full flex items-center justify-center', branchName ? 'pt-[72px]' : '']}>
+      <slot />
+    </div>
+  </div>
+</Layout>
+
+<style>
+  :global(html), :global(body) {
+    overflow: hidden;
+    height: 100%;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+import Layout from './Layout.astro';
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'FlowLess Display' } = Astro.props;
+---
+
+<Layout title={title}>
+  <Fragment slot="head">
+    <meta http-equiv="refresh" content="30" />
+  </Fragment>
+  <div class="fixed inset-0 bg-surface-dark text-white overflow-hidden">
+    <slot />
+  </div>
+</Layout>
+
+<style>
+  :global(html), :global(body) {
+    overflow: hidden;
+    height: 100%;
+    background: #0f172a;
+    cursor: none;
+  }
+</style>
